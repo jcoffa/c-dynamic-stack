@@ -1,12 +1,12 @@
-#include "Stack.h"
+#include "DynStack.h"
 
 
-Stack *stackNew(void (*deleteFunc)(void *), char *(*printFunc)(void *)) {
+DynStack *dynstackNew(void (*deleteFunc)(void *), char *(*printFunc)(void *)) {
 	if (deleteFunc == NULL || printFunc == NULL) {
 		return NULL;
 	}
 
-	Stack *toReturn = malloc(sizeof(Stack));
+	DynStack *toReturn = malloc(sizeof(DynStack));
 
 	// Can't assume malloc works every time, no matter how unlikely
 	if (toReturn == NULL) {
@@ -22,8 +22,8 @@ Stack *stackNew(void (*deleteFunc)(void *), char *(*printFunc)(void *)) {
 }
 
 
-Frame *stackFrameNew(void *data) {
-	Frame *toReturn = malloc(sizeof(Frame));
+DynFrame *dynstackFrameNew(void *data) {
+	DynFrame *toReturn = malloc(sizeof(DynFrame));
 
 	// Can't assume malloc works every time, no matter how unlikely
 	if (toReturn == NULL) {
@@ -37,35 +37,35 @@ Frame *stackFrameNew(void *data) {
 }
 
 
-void stackClear(Stack *stack) {
+void dynstackClear(DynStack *stack) {
 	if (stack == NULL) {
 		return;
 	}
 
-	while (!stackIsEmpty(stack)) {
-		// stackPop already removes and frees the stack Frame struct,
+	while (!dynstackIsEmpty(stack)) {
+		// stackPop already removes and frees the stack DynFrame struct,
 		// so we only have to delete the frame's stored data
-		stack->deleteData(stackPop(stack));
+		stack->deleteData(dynstackPop(stack));
 	}
 }
 
 
-void stackFree(Stack *stack) {
+void dynstackFree(DynStack *stack) {
 	if (stack == NULL) {
 		return;
 	}
 
-	stackClear(stack);
+	dynstackClear(stack);
 	free(stack);
 }
 
 
-bool stackPush(Stack *stack, void *data) {
+bool dynstackPush(DynStack *stack, void *data) {
 	if (stack == NULL) {
 		return false;
 	}
 
-	Frame *toPush = stackFrameNew(data);
+	DynFrame *toPush = dynstackFrameNew(data);
 
 	// Can't assume malloc works every time, no matter how unlikely
 	if (toPush == NULL) {
@@ -79,7 +79,7 @@ bool stackPush(Stack *stack, void *data) {
 }
 
 
-void *stackPeek(const Stack *stack) {
+void *dynstackPeek(const DynStack *stack) {
 	if (stack == NULL || stack->top == NULL) {
 		return NULL;
 	}
@@ -88,13 +88,13 @@ void *stackPeek(const Stack *stack) {
 }
 
 
-void *stackPop(Stack *stack) {
+void *dynstackPop(DynStack *stack) {
 	if (stack == NULL || stack->top == NULL) {
 		return NULL;
 	}
 
 	// Save the top frame and its data
-	Frame *top = stack->top;
+	DynFrame *top = stack->top;
 	void *toReturn = top->data;
 
 	// Move the stack pointer
@@ -107,7 +107,7 @@ void *stackPop(Stack *stack) {
 }
 
 
-unsigned int stackGetSize(const Stack *stack) {
+unsigned int dynstackGetSize(const DynStack *stack) {
 	if (stack == NULL) {
 		return 0;
 	}
@@ -115,18 +115,18 @@ unsigned int stackGetSize(const Stack *stack) {
 }
 
 
-bool stackIsEmpty(const Stack *stack) {
-	return stackGetSize(stack) == 0;
+bool dynstackIsEmpty(const DynStack *stack) {
+	return dynstackGetSize(stack) == 0;
 }
 
 
-char *stackTopToString(const Stack *stack) {
+char *dynstackTopToString(const DynStack *stack) {
 	if (stack == NULL) {
 		return NULL;
 	}
 
 	char *toReturn;
-	if (stackIsEmpty(stack)) {
+	if (dynstackIsEmpty(stack)) {
 		toReturn = malloc(sizeof(char));
 		toReturn[0] = '\0';
 	} else {
@@ -137,29 +137,29 @@ char *stackTopToString(const Stack *stack) {
 }
 
 
-void stackPrintTop(const Stack *stack) {
+void dynstackPrintTop(const DynStack *stack) {
 	if (stack == NULL) {
 		return;
 	}
 
-	char *toPrint = stackTopToString(stack);
+	char *toPrint = dynstackTopToString(stack);
 	printf("%s\n", toPrint);
 	free(toPrint);
 }
 
 
-char *stackToString(const Stack *stack) {
+char *dynstackToString(const DynStack *stack) {
 	if (stack == NULL) {
 		return NULL;
 	}
 
 	// Start with the top of the stack
-	char *toReturn = stackTopToString(stack);
+	char *toReturn = dynstackTopToString(stack);
 	size_t length = strlen(toReturn);
 
 	// Prepare to iterate over the rest of the stack beyond the top
-	Frame *cur;
-	if (stackIsEmpty(stack)) {
+	DynFrame *cur;
+	if (dynstackIsEmpty(stack)) {
 		// If the stack is empty then `cur = stack->top->next`
 		// will error out or segfault since `stack->top` is NULL,
 		// so this guard is necessary
@@ -183,12 +183,12 @@ char *stackToString(const Stack *stack) {
 }
 
 
-void stackPrint(const Stack *stack) {
+void dynstackPrint(const DynStack *stack) {
 	if (stack == NULL) {
 		return;
 	}
 
-	char *toPrint = stackToString(stack);
+	char *toPrint = dynstackToString(stack);
 	printf("%s\n", toPrint);
 	free(toPrint);
 }

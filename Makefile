@@ -8,7 +8,7 @@ BIN = bin
 VPATH := $(SRC):$(HED):$(BIN)
 
 # Files
-LIB = libstack.so
+LIB = libdynstack.so
 SRCS := $(wildcard $(SRC)/*.c)
 HEDS := $(wildcard $(HED)/*.h)
 OBJS := $(addprefix $(BIN)/,$(notdir $(SRCS:%.c=%.o)))
