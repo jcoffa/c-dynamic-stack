@@ -193,3 +193,16 @@ void dynstackPrint(const DynStack *stack) {
 	free(toPrint);
 }
 
+
+void dynstackMap(DynStack *stack, void (*func)(void *)) {
+	if (stack == NULL || dynstackIsEmpty(stack)) {
+		return;
+	}
+
+	DynFrame *cur = stack->top;
+	while (cur != NULL) {
+		func(cur->data);
+		cur = cur->next;
+	}
+}
+

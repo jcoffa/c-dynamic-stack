@@ -152,10 +152,10 @@ void dynstackPrint(const DynStack *stack);
 
 
 /*
- * Execute a function `func` on each node in the stack
+ * Execute a function `func` on each element in the stack
  * starting from the top and working downwards.
  */
-void dynstackMap(DynStack *stack, void (*func)(DynFrame *));
+void dynstackMap(DynStack *stack, void (*func)(void *));
 
 #endif	// DYNSTACK_H
 
